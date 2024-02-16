@@ -17,5 +17,8 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    'no-unused-vars': 'off', // eslint-disable-line no-unused-vars
+    'react-hooks/exhaustive-deps': 'off',
+    'react/prop-types': 'off',
   },
 }
