@@ -1,3 +1,5 @@
+import { saveAs } from 'file-saver';
+
 import { useState, useEffect } from 'react';
 import ButtonKlein from './componets_design/ButtonKlein';
 import HeaderComponent from './componets_design/HeaderComponent';
@@ -5,9 +7,55 @@ import './input.css';
 
 // Tipos de caso
 const casos = ["1. Importado", "2. Extracomunitario"]
+const data_ini = {
+  "name": "",
+  "primer_apellido": "",
+  "segundo_apellido": "",
+  "mail": "",
+  "tel": "",
+  "provincia": "",
+  "poblacion": "",
+  "tipo_caso": "",
+  "ccaa": "",
+  "country": ""
+}
+const data_user_delete = {
+  "name": "",
+  "primer_apellido": "",
+  "segundo_apellido": "",
+  "mail": "",
+  "tel": "",
+  "provincia": "",
+  "poblacion": "",
+  "tipo_caso": "",
+  "ccaa": "",
+  "country": ""
+}
+const data_user_ini =
+{
+  "name": "jose antonio",
+  "primer_apellido": "fer",
+  "segundo_apellido": "ver",
+  "mail": "Ruth2007paredes@gmail.com",
+  "tel": "8765873468765",
+  "provincia": "Córdoba",
+  "poblacion": "Alcaracejos",
+  "tipo_caso": "2. Extracomunitario",
+  "ccaa": "Balears, Illes",
+  "country": ""
+}
 
 function App() {
-  const [data_submit, setDataSubmit] = useState({}) // Variable de estado para almacenar el JSON completo [data_Submit]
+  // File Saver
+  function exportJSON(data) {
+    const string_json = JSON.stringify(data, null, 2);
+    const file = new Blob([string_json], { type: "text/plain;charset=utf-8" });
+    const filePath = 'save.json';
+    saveAs(file, filePath);
+  }
+
+  // Variables de estado
+  const [data_submit, setDataSubmit] = useState(data_ini) // Variable de estado para almacenar el JSON completo [data_Submit]
   const [toggle_data_submit, setToggle_data_submit] = useState(false)
 
   const [caso, setCaso] = useState("")
@@ -25,10 +73,6 @@ function App() {
 
   const [countries, setCountries] = useState([]); // Variable de estado para almacenar el JSON completo
   const [country, setCountry] = useState("") // Variable de estado para almacenar el campo "es_name"
-
-  useEffect(() => {
-    setCaso("")
-  }, [])
 
   // 1.- Provincias fetch
   useEffect(() => {
@@ -108,10 +152,7 @@ function App() {
   }, [country])
 
 
-  useEffect(() => {
-    console.log(caso)
-  }, [caso])
-
+  useEffect(() => { console.log(caso) }, [caso])
   useEffect(() => { console.log(ccaa) }, [ccaa])
   useEffect(() => { console.log(poblacion) }, [poblacion])
   useEffect(() => { console.log(provincia) }, [provincia])
@@ -122,6 +163,7 @@ function App() {
   }
 
   function handleButtonDelete() {
+    setDataSubmit(data_ini)
     setCaso("")
     setCCAAs([])
     setCCAA("")
@@ -152,12 +194,75 @@ function App() {
       country: country,
     }
     console.log(JSON.stringify(data))
+    exportJSON(data)
 
     setDataSubmit(data)
+    handleSave(data)
   }
+
+  const handleSave = async (parJSON) => {
+    const newData = parJSON; /* dato nuevo */
+    await fetch('http://127.0.0.1:3001/api/data/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newData),
+    });
+  };
+
+  /////////////////////////////////////////////////////////////
+  const BASE_DATA_JSON = "data/json/data_ini.json"
+  function handleButtonInitialUser() {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:3001/api/dataini/');
+        const jsonData = await response.json();
+        setDataSubmit(jsonData);
+        console.log("jsonData: ", jsonData);
+      } catch (error) {
+        console.error('Error al obtener datos del servidor', error);
+      }
+    };
+
+    fetchData();
+  }
+
+  function handleButtonUpdatelUser() {
+    console.log("Entro en el handleButtonUpdatelUser")
+    const fetchDataUpdated = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:3001/api/dataupdated/');
+        const jsonData = await response.json();
+        setDataSubmit(jsonData);
+        console.log("En handleButtonUpdatelUser, jsonData: ", jsonData);
+      } catch (error) {
+        console.error('Error al obtener datos del servidor', error);
+      }
+    };
+
+    fetchDataUpdated();
+  }
+
 
   return (
     <>
+      <div className="buttons_ini">
+        <ButtonKlein
+          handleButton={handleButtonInitialUser}
+          text="Initial User"
+          parW="9rem"
+          parH="2.6rem"
+          parFS="1rem"
+        />
+        <ButtonKlein
+          handleButton={handleButtonUpdatelUser}
+          text="Updated User"
+          parW="9rem"
+          parH="2.6rem"
+          parFS="1rem"
+        />
+      </div>
       <form className="form" onSubmit={(ev) => handleFormSubmit(ev)}>
         <div className="reg_form">
           <InputTextField
@@ -165,18 +270,24 @@ function App() {
             placeholder_input="Introduce tu nombre"
             id_input="name"
             type_input="text"
+            value={data_submit["name"]}
+            setValue={(ev) => setDataSubmit({ ...data_submit, "name": ev.target.value })}
           />
           <InputTextField
             label_text="Primer apellido:"
             placeholder_input="Introduce tu primer apellido"
             id_input="primer_apellido"
             type_input="text"
+            value={data_submit["primer_apellido"]}
+            setValue={(ev) => setDataSubmit({ ...data_submit, "primer_apellido": ev.target.value })}
           />
           <InputTextField
             label_text="Segundo apellido:"
             placeholder_input="Introduce tu segundo apellido"
             id_input="segundo_apellido"
             type_input="text"
+            value={data_submit["segundo_apellido"]}
+            setValue={(ev) => setDataSubmit({ ...data_submit, "segundo_apellido": ev.target.value })}
           />
         </div>
 
@@ -186,12 +297,16 @@ function App() {
             placeholder_input="Introduce tu mail"
             id_input="mail"
             type_input="mail"
+            value={data_submit["mail"]}
+            setValue={(ev) => setDataSubmit({ ...data_submit, "mail": ev.target.value })}
           />
           <InputTextField
             label_text="Tel:"
             placeholder_input="+34"
             id_input="tel"
             type_input="tel"
+            value={data_submit["tel"]}
+            setValue={(ev) => setDataSubmit({ ...data_submit, "tel": ev.target.value })}
           />
         </div>
 
@@ -203,6 +318,7 @@ function App() {
             disabled={false}
             response={[""]}
             optionsValues={provincias}
+            value={provincia}
             setValue={setProvincia}
           />
 
@@ -213,6 +329,7 @@ function App() {
             disabled={false}
             response={[""]}
             optionsValues={poblaciones}
+            value={poblacion}
             setValue={setPoblacion}
           />
 
@@ -223,6 +340,7 @@ function App() {
             disabled={false}
             response={[""]}
             optionsValues={casos}
+            value={caso}
             setValue={setCaso}
           />
 
@@ -244,6 +362,7 @@ function App() {
                   disabled={false}
                   response={[""]}
                   optionsValues={countries}
+                  value={country}
                   setValue={setCountry}
                 />
                 :
@@ -254,6 +373,7 @@ function App() {
                   disabled={false}
                   response={[""]}
                   optionsValues={ccaas}
+                  value={ccaa}
                   setValue={setCCAA}
                 />
           }
@@ -279,20 +399,19 @@ function App() {
       {
         toggle_data_submit && <DataSubmit data_submit={data_submit} />
       }
-      <div>
 
-      </div>
     </>
   )
 }
 
 export default App
 
-function InputTextField({ label_text, placeholder_input, id_input, type_input }) {
+function InputTextField({ label_text, placeholder_input, id_input, type_input, value, setValue }) {
   return (
     <div className="div_input">
       <label htmlFor={id_input}>{label_text}</label>
-      <input id={id_input} type={type_input} placeholder={placeholder_input} />
+      <input id={id_input} type={type_input} placeholder={placeholder_input} value={value}
+        onChange={setValue} />
     </div>
 
   )
