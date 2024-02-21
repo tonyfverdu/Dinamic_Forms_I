@@ -18,6 +18,7 @@ dotenv.config()
 const BASE_DATA_JSON = "data/json/data_ini.json"
 
 /** ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+const URL_BASE_UPDATED = "/home/user/Desktop/FormDin_React/Dinamic_Forms_I/react_form_dinamic_1/backend/data/json/"
 const myLocalHost = process.env.LOCALHOST || constants.webServer.myLocal_Host
 const myPort = process.env.PORT || constants.webServer.myPort
 
@@ -26,8 +27,10 @@ const __dirname = path.dirname(__filename);
 const dataDirectory = path.join(__dirname, 'data', 'json');
 const dataFilePath = path.join(dataDirectory, 'data_ini.json')
 
-const URL_BASE_UPDATED = "/home/user/Desktop/Dinamische_Forms/Dinamic_Forms_I/react_form_dinamic_1/backend/"
-const dataFilePath_updated = path.join(URL_BASE_UPDATED, 'data_2.json')
+const dataFilePathGet = path.join(dataDirectory, 'data_2.json')
+//const dataFilePathGet = path.join(URL_BASE_UPDATED, 'data_2.json')
+//const URL_BASE_UPDATED = "/home/user/Desktop/Dinamische_Forms/Dinamic_Forms_I/react_form_dinamic_1/backend/"
+const dataFilePath_updated = path.join(dataDirectory, 'data_2.json')
 
 
 /** Instantation vom WebServer Express   /////////////////////////////////////////////////////////////////////////////////////// */
@@ -60,10 +63,9 @@ app.get('/api/dataini', (req, res) => {
 });
 
 //  1.1- GET DATA FROM JSON FILE. READ FILE AND RETURN JSON
-app.get('/api/dataupdated', (req, res) => {
+app.get('/api/dataget', (req, res) => {
   try {
-    console.log('En handleButtonUpdatelUser, dataFilePath_updated: ', dataFilePath_updated);
-    const jsonData = readFileSync(dataFilePath_updated, 'utf-8');
+    const jsonData = readFileSync(dataFilePathGet, 'utf-8');
     console.log('En handleButtonUpdatelUser, jsonData: ', jsonData);
     res.status(200).json(JSON.parse(jsonData));
   } catch (error) {
@@ -74,15 +76,13 @@ app.get('/api/dataupdated', (req, res) => {
 
 
 //  2.- SAVE DATA IN JSON FILE. READ FILE AND RETURN JSON
-app.post('/api/data', (req, res) => {
-  console.log("entro aqui, en el post del backend");
+app.post('/api/datasave', (req, res) => {
   const newData = req.body;
   console.log("newData: ", newData);
 
   try {
-    console.log("entro en el try del post del backend");
     // console.log("dataFilePath: ", dataFilePath);
-    writeFileSync('data_2.json', JSON.stringify(newData, null, 2), 'utf8');
+    writeFileSync(dataFilePath_updated, JSON.stringify(newData, null, 2), 'utf8');
     res.json({ message: 'Data saved successfully' });
   } catch (error) {
     console.error(error);
@@ -91,13 +91,14 @@ app.post('/api/data', (req, res) => {
 
 
 //  3.- UPDATE DATA IN JSON FILE. READ FILE AND RETURN JSON
-app.put('/api/data', (req, res) => {
+app.put('api/dataupdated', (req, res) => {
   console.log("entro aqui, en el put del backend");
   const updatedData = req.body;
   console.log("updatedData: ", updatedData);
+
   try {
     console.log("entro en el try del put del backend");
-    writeFileSync('data_2.json', JSON.stringify(updatedData, null, 2), 'utf8');
+    writeFileSync(dataFilePath_updated, JSON.stringify(updatedData, null, 2), 'utf8');
     res.json({ message: 'Data updated successfully' });
   } catch (error) {
     console.error(error);

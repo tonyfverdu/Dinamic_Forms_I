@@ -1,3 +1,4 @@
+
 /* form_dinam_I/src/input.css */
 #root {
   max-width: 70vw;
@@ -53,9 +54,9 @@ form {
 
 .cont_provincias {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: end;
+  flex-direction:column;
+  justify-content:center;
+  align-items:end;
   width: auto;
   height: auto;
   gap: 0.8rem;
@@ -78,18 +79,18 @@ form {
   align-items: center;
   width: 100%;
   height: 3rem;
-  margin: 0.6rem;
-  margin-top: 2rem;
   gap: 1rem;
 }
 
 .buttons_ini {
   display: flex;
   flex-direction: row;
-  justify-content:left;
+  justify-content: end;
   align-items: center;
   width: 100%;
   height: 3rem;
+  margin: 0.6rem;
+  margin-top: 2rem;
   gap: 1rem;
 }
 
@@ -117,7 +118,6 @@ input {
   transition: all ease 0.35s;
   cursor: pointer;
 }
-
 input:hover {
   color: rgb(116, 0, 0);
   background-color: #bbbbbd;
@@ -137,7 +137,6 @@ select {
   transition: all ease 0.35s;
   cursor: pointer;
 }
-
 select:hover {
   background-color: #bbbbbd;
   border: 2px solid orange;
@@ -179,3 +178,5 @@ select:hover {
 .read-the-docs {
   color: #888;
 } */
+
+/*# sourceMappingURL=output.css.map */

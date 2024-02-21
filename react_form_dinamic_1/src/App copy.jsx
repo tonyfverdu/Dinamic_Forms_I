@@ -5,8 +5,6 @@ import ButtonKlein from './componets_design/ButtonKlein';
 import HeaderComponent from './componets_design/HeaderComponent';
 import './input.css';
 
-import { Select_probe } from './Select_probe.jsx';
-
 // Tipos de caso
 const casos = ["1. Importado", "2. Extracomunitario"]
 const data_ini = {
@@ -21,6 +19,31 @@ const data_ini = {
   "ccaa": "",
   "country": ""
 }
+const data_user_delete = {
+  "name": "",
+  "primer_apellido": "",
+  "segundo_apellido": "",
+  "mail": "",
+  "tel": "",
+  "provincia": "",
+  "poblacion": "",
+  "tipo_caso": "",
+  "ccaa": "",
+  "country": ""
+}
+const data_user_ini =
+{
+  "name": "jose antonio",
+  "primer_apellido": "fer",
+  "segundo_apellido": "ver",
+  "mail": "Ruth2007paredes@gmail.com",
+  "tel": "8765873468765",
+  "provincia": "Córdoba",
+  "poblacion": "Alcaracejos",
+  "tipo_caso": "2. Extracomunitario",
+  "ccaa": "Balears, Illes",
+  "country": ""
+}
 
 function App() {
   // File Saver
@@ -32,7 +55,7 @@ function App() {
   }
 
   // Variables de estado
-  const [data_submit, setDataSubmit] = useState({}) // Variable de estado para almacenar el JSON completo [data_Submit]
+  const [data_submit, setDataSubmit] = useState(data_ini) // Variable de estado para almacenar el JSON completo [data_Submit]
   const [toggle_data_submit, setToggle_data_submit] = useState(false)
 
   const [caso, setCaso] = useState("")
@@ -54,11 +77,10 @@ function App() {
   // 1.- Provincias fetch
   useEffect(() => {
 
-    /*
     if (provincia !== "") {
       setProvincias([])
     }
-*/
+
     fetch("./public/data/provincias.json")
       .then(response => response.json())
       .then(data => {
@@ -78,11 +100,9 @@ function App() {
 
   // 2.- CCAAs fetch
   useEffect(() => {
-    /*
     if (ccaa !== "") {
       setCCAAs([])
     }
-    */
     fetch("./public/data/ccaas.json")
       .then(response => response.json())
       .then(data => {
@@ -96,12 +116,10 @@ function App() {
 
   // 3.- Poblaciones fetch
   useEffect(() => {
-
-    /*
     if (poblacion !== "") {
       setPoblaciones([])
     }
-*/
+
     fetch("./public/data/poblaciones.json")
       .then(response => response.json())
       .then(data => {
@@ -116,12 +134,10 @@ function App() {
 
   // 4.- Countries fetch
   useEffect(() => {
-    /*
     if (country !== "") {
       setCountries([])
     }
 
-    */
     fetch("./public/data/paises.json")
       .then(response => response.json())
       .then(data => {
@@ -132,6 +148,13 @@ function App() {
       .catch(error => console.error(error));
   }, [country])
 
+  /*
+    useEffect(() => { console.log(caso) }, [caso])
+    useEffect(() => { console.log(ccaa) }, [ccaa])
+    useEffect(() => { console.log(poblacion) }, [poblacion])
+    useEffect(() => { console.log(provincia) }, [provincia])
+    useEffect(() => { console.log(country) }, [country])
+  */
   function handleButtonSubmit() {
     setToggle_data_submit(true)
   }
@@ -193,12 +216,8 @@ function App() {
       try {
         const response = await fetch('http://127.0.0.1:3001/api/dataini/');
         const jsonData = await response.json();
-        setDataSubmit(ant => jsonData);
+        setDataSubmit(jsonData);
         setProvincia(ant => jsonData.provincia);
-        setPoblacion(ant => jsonData.poblacion);
-        setCaso(ant => jsonData.tipo_caso);
-        setCCAA(ant => jsonData.ccaa);
-        setCountry(ant => jsonData.country);
       } catch (error) {
         console.error('Error al obtener datos del servidor', error);
       }
@@ -228,12 +247,7 @@ function App() {
       try {
         const response = await fetch('http://127.0.0.1:3001/api/dataget/');
         const jsonData = await response.json();
-        setDataSubmit(ant =>jsonData);
-        setProvincia(ant => jsonData.provincia);
-        setPoblacion(ant => jsonData.poblacion);
-        setCaso(ant => jsonData.tipo_caso);
-        setCCAA(ant => jsonData.ccaa);
-        setCountry(ant => jsonData.country);
+        setDataSubmit(jsonData);
       } catch (error) {
         console.error('Error al obtener datos del servidor', error);
       }
@@ -309,92 +323,6 @@ function App() {
         </div>
 
         <div className="reg_form">
-          <Select_probe
-            select_id="select_provincia"
-            selectTextLabel="Provincia"
-            array_options={provincias}
-            option_select={provincia || data_submit.provincia}
-            handleSelect={setProvincia}
-          />
-
-          <Select_probe
-            select_id="select_poblacion"
-            selectTextLabel="Poblacion"
-            array_options={poblaciones}
-            option_select={poblacion || data_submit.poblacion}
-            handleSelect={setPoblacion}
-          />
-
-          <Select_probe
-            select_id="select_tipo_caso"
-            selectTextLabel="Tipo de caso"
-            array_options={casos}
-            option_select={caso || data_submit.tipo_caso}
-            handleSelect={setCaso}
-          />
-        </div>
-
-        {
-          caso === "" ?
-            <>
-              <p>Entro aqui por que caso esta vacio? {data_submit.caso}</p>
-              <HeaderComponent
-                title="Selecciona un caso"
-                subtitle="1.- Importado  2.- Extracomunitario"
-              />
-            </>
-            :
-            caso === "1. Importado" ?
-              <Select_probe
-                select_id="select_pais"
-                selectTextLabel="Pais"
-                array_options={countries}
-                option_select={country || data_submit.country}
-                handleSelect={setCountry}
-              />
-              :
-              <Select_probe
-                select_id="select_ccaa"
-                selectTextLabel="Comunidad Autonoma"
-                array_options={ccaas}
-                option_select={ccaa || data_submit.ccaa}
-                handleSelect={setCCAA}
-              />
-        }
-
-        <div className="group_buttons">
-          <ButtonKlein
-            handleButton={handleButtonDelete}
-            text="Delete"
-            parW="6rem"
-            parH="2.6rem"
-            parFS="1rem"
-          />
-          <ButtonKlein
-            handleButton={handleButtonSubmit}
-            text="Submit"
-            parW="6rem"
-            parH="2.6rem"
-            parFS="1rem"
-          />
-        </div>
-      </form>
-      {
-        toggle_data_submit && <DataSubmit data_submit={data_submit} />
-      }
-
-    </>
-  )
-}
-
-export default App
-/*
-
-      
-*/
-
-/*
-<div className="reg_form">
           <SelectElement
             select_id="select_provincia"
             selectTextLabel="Provincia"
@@ -453,7 +381,7 @@ export default App
                   value={data_submit["country"]}
                   defaultValue={data_submit["country"]}
                   onChange={setCountry}
-                // setValue={setCountry}
+                 // setValue={setCountry}
                 />
                 :
                 <SelectElement
@@ -466,11 +394,37 @@ export default App
                   value={data_submit["ccaa"]}
                   defaultValue={data_submit["ccaa"]}
                   onChange={setCCAA}
-                //setValue={setCCAA}
+                  //setValue={setCCAA}
                 />
           }
         </div>
-*/
+
+        <div className="group_buttons">
+          <ButtonKlein
+            handleButton={handleButtonDelete}
+            text="Delete"
+            parW="6rem"
+            parH="2.6rem"
+            parFS="1rem"
+          />
+          <ButtonKlein
+            handleButton={handleButtonSubmit}
+            text="Submit"
+            parW="6rem"
+            parH="2.6rem"
+            parFS="1rem"
+          />
+        </div>
+      </form>
+      {
+        toggle_data_submit && <DataSubmit data_submit={data_submit} />
+      }
+
+    </>
+  )
+}
+
+export default App
 
 function InputTextField({ label_text, placeholder_input, id_input, type_input, value, setValue }) {
   return (
